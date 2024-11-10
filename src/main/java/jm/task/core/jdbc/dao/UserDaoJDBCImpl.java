@@ -44,21 +44,11 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void createUsersTable() {
-        try (Connection connection = Util.open();
-             var preparedStatement = connection.prepareStatement(CREATE_USERS_TABLE);) {
-            preparedStatement.execute(CREATE_USERS_TABLE);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    openConnectionAndPrepStatement(CREATE_USERS_TABLE);
     }
 
     public void dropUsersTable() {
-        try (Connection connection = Util.open();
-             var preparedStatement = connection.prepareStatement(DROP_USERS_TABLE);) {
-            preparedStatement.execute(DROP_USERS_TABLE);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+   openConnectionAndPrepStatement(DROP_USERS_TABLE);
     }
 
     public void saveUser(String name, String lastName, byte age) {
@@ -67,6 +57,7 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -74,8 +65,9 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void removeUserById(long id) {
         try (Connection connection = Util.open();
-             var preparedStatement = connection.prepareStatement(REMOVE_BY_ID);) {
+             var preparedStatement = connection.prepareStatement(REMOVE_BY_ID)) {
             preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -100,9 +92,13 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void cleanUsersTable() {
+        openConnectionAndPrepStatement(CLEAN_USERS);
+    }
+
+    public void openConnectionAndPrepStatement(String sql) {
         try (Connection connection = Util.open();
-             var preparedStatement = connection.prepareStatement(CLEAN_USERS);) {
-            preparedStatement.execute(CLEAN_USERS);
+             var preparedStatement = connection.prepareStatement(sql);) {
+            preparedStatement.execute(sql);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
