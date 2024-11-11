@@ -16,8 +16,7 @@ public class PropertiesUtil {
     private static void loadProperties() {
         try (var inputstream = PropertiesUtil.class.getClassLoader().getResourceAsStream("application.properties")) {
             PROPERTIES.load(inputstream);
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
