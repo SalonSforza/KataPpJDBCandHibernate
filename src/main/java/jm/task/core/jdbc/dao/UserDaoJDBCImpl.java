@@ -4,6 +4,8 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +55,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void saveUser(String name, String lastName, byte age) {
         try (Connection connection = Util.open();
-             var preparedStatement = connection.prepareStatement(SAVE_USER);) {
+             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_USER);) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
@@ -65,7 +67,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void removeUserById(long id) {
         try (Connection connection = Util.open();
-             var preparedStatement = connection.prepareStatement(REMOVE_BY_ID)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(REMOVE_BY_ID)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -75,8 +77,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public List<User> getAllUsers() {
         try (Connection connection = Util.open();
-             var preparedStatement = connection.prepareStatement(GET_ALL_USERS);) {
-            var resultSet = preparedStatement.executeQuery();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_USERS);) {
+            ResultSet resultSet = preparedStatement.executeQuery();
             List<User> users = new ArrayList<>();
             while (resultSet.next()) {
                 users.add(new User(
@@ -97,7 +99,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void openConnectionAndPrepStatement(String sql) {
         try (Connection connection = Util.open();
-             var preparedStatement = connection.prepareStatement(sql);) {
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);) {
             preparedStatement.execute(sql);
         } catch (SQLException e) {
             throw new RuntimeException(e);
